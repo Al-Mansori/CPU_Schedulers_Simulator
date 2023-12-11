@@ -1,6 +1,4 @@
-Certainly! Below is an example of a README file for your CPU Scheduler Simulator project:
 
----
 
 # CPU Scheduler Simulator
 
