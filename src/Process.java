@@ -35,7 +35,6 @@ public class Process {
         else{
             setAGFactor(10 + arrivalTime + burstTime);
         }
-
     }
     public int getAGFactor() {
         return AGFactor;

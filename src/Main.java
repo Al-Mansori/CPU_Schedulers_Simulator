@@ -42,16 +42,17 @@ public class Main {
         }
 
         // Create instances of schedulers
-        SJFScheduler sjfScheduler = new SJFScheduler(new ArrayList<>(processes));
-        SRTFScheduler srtfScheduler = new SRTFScheduler(new ArrayList<>(processes));
-        PriorityScheduler priorityScheduler = new PriorityScheduler(new ArrayList<>(processes));
+//        SJFScheduler sjfScheduler = new SJFScheduler(new ArrayList<>(processes));
+//        SRTFScheduler srtfScheduler = new SRTFScheduler(new ArrayList<>(processes));
+//        PriorityScheduler priorityScheduler = new PriorityScheduler(new ArrayList<>(processes));
         AGScheduler agScheduler = new AGScheduler(new ArrayList<>(processes), timeQuantum);
 
         // Execute each scheduler
-        sjfScheduler.execute();
-        srtfScheduler.execute();
-        priorityScheduler.execute();
+//        sjfScheduler.execute();
+//        srtfScheduler.execute();
+//        priorityScheduler.execute();
         agScheduler.execute();
+        agScheduler.printProcesses();
 //
         // Display output for each scheduler
         // Print Processes execution order, Waiting Time, Turnaround Time, Average

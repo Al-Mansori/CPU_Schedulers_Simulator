@@ -1,36 +1,45 @@
-import java.util.Comparator;
-import java.util.List;
-import java.util.Queue;
-import java.util.Random;
+import java.util.*;
 
 public class AGScheduler extends Scheduler {
     int quantum;
     int time;
-    Queue<Process> died;
-    Queue<Process> waiting;
+    Queue<Process> completedProcesses;
+    Queue<Process> readyQueue;
 
+    List<String> quantumHistory;
+
+    Map<Process, Integer> turnAroundTimeMap = new HashMap<>();
+    Map<Process, Integer> waitingTimeMap = new HashMap<>();
 
     public AGScheduler(List<Process> processes, int quantum) {
         super(processes);
         this.quantum = quantum;
+        this.completedProcesses = new LinkedList<>();
+        this.readyQueue = new LinkedList<>();
+        this.quantumHistory = new LinkedList<>();
     }
 
-    public void sort_arrival(List<Process> processes){
+    public void sortArrival(List<Process> processes) {
         processes.sort(Comparator.comparing(Process::getArrivalTime));
+    }
 
-    }
-    public double mean_of_quantum(List<Process> processes){
-        int sumOfQuantum=0;
-        for (Process p : processes){
-            sumOfQuantum+=p.quantum;
+    public double meanOfQuantum(List<Process> processes, int currentTime) {
+        int sumOfQuantum = 0;
+        int count = 0;
+        for (Process p : processes) {
+            if (p.arrivalTime <= currentTime && p.burstTime > 0) {
+                sumOfQuantum += p.quantum;
+                count++;
+            }
         }
-        return sumOfQuantum/processes.size();
+        return count == 0 ? 0 : sumOfQuantum / count;
     }
-    public Process get_smallest_ag_factor(List<Process> processes , Process currentProcess){
+
+    public Process getSmallestAgFactor(List<Process> processes, Process currentProcess) {
         Process smallestAgFactor = null;
-        for (Process p: processes){
-            if(currentProcess == null || p.getAGFactor()<currentProcess.getAGFactor()){
-                if (smallestAgFactor == null || p.getAGFactor() < smallestAgFactor.getAGFactor()){
+        for (Process p : processes) {
+            if (currentProcess == null || p.getAGFactor() < currentProcess.getAGFactor()) {
+                if (smallestAgFactor == null || p.getAGFactor() < smallestAgFactor.getAGFactor()) {
                     smallestAgFactor = p;
                 }
             }
@@ -40,57 +49,101 @@ public class AGScheduler extends Scheduler {
 
     @Override
     public void execute() {
-        sort_arrival(processes);
+        sortArrival(processes);
         time = 0;
-        while (true){
-            if(!waiting.isEmpty()){
-                //here we should run non-preemptive for the half of quantum time
-                //increase time update current process quantum time
-                Process currentProcess = waiting.poll();
-                int processTime = currentProcess.getQuantum()/2;
-                time += processTime;
-                int remainingTime = currentProcess.getQuantum() - processTime;
-                currentProcess.setQuantum(currentProcess.quantum+=remainingTime);
+        Process currentProcess = null;
 
-                //preemptive check if there is process arrived + have smaller ag factor
-                while(true){
-                   Process newProcess =  get_smallest_ag_factor(processes,currentProcess);
-                    if(newProcess != null &&  newProcess.arrivalTime>=time){
-                        currentProcess.burstTime -= processTime;//must update current burst and
-                        waiting.add(newProcess);
-                        break;
-                    }
-                    else {
-                        time += 1; // run second by second
-                        processTime++;//update quantum time
-                        remainingTime--;
-                        if (processTime == quantum) {
-                            currentProcess.setQuantum((int) Math.ceil(0.1 * mean_of_quantum(processes)));
-                        } else {
-                            currentProcess.setQuantum(currentProcess.quantum += remainingTime);
-                        }
-                        currentProcess.burstTime--;
-                        if (currentProcess.burstTime == 0) {
-                            currentProcess.setQuantum(0);
-                            died.add(currentProcess);
+        int currentQuantum = quantum; // Initialize current quantum
 
-                        }
-                        break;
-                    }
-                }
-            }else{
-                //here we must get smallest ag factor
-                //put him in the waiting queue
-                //remove from processes list
-                Process newProcess = get_smallest_ag_factor(processes,null);
-                if(newProcess!=null){
-                    waiting.add(newProcess);
-                    processes.remove(newProcess);
-
-                }else{
+        while (!processes.isEmpty() || currentProcess != null || !readyQueue.isEmpty()) {
+            if (currentProcess == null) {
+                currentProcess = getSmallestAgFactor(processes, null);
+                if (currentProcess != null) {
+                    readyQueue.add(currentProcess);
+                    processes.remove(currentProcess);
+                } else {
                     break;
                 }
             }
+
+            // Non-preemptive
+            int processTime = (int) Math.min(Math.ceil(currentQuantum / 2.0), currentProcess.burstTime);
+            time += processTime;
+            currentProcess.burstTime -= processTime;
+            quantumHistory.add("Quantum time: " + currentQuantum + ", Process number: " + currentProcess.name
+                    + ", Process quantum: " + currentProcess.getQuantum());
+
+            if (currentProcess.burstTime == 0) {
+                currentProcess.setQuantum(0);
+                completedProcesses.add(currentProcess);
+                turnAroundTimeMap.put(currentProcess, time - currentProcess.arrivalTime);
+                currentProcess = null;
+                currentQuantum = quantum; // Reset quantum for the next process
+                continue;
+            }
+            currentProcess.setQuantum(currentProcess.quantum += processTime);
+
+            // Preemptive
+            while (true) {
+                Process newProcess = getSmallestAgFactor(processes, currentProcess);
+                if (newProcess != null && newProcess.arrivalTime >= time && newProcess.getAGFactor() < currentProcess.getAGFactor()) {
+                    readyQueue.add(currentProcess);
+                    currentProcess = newProcess;
+                    processTime = 0;
+
+                    processes.remove(newProcess);
+                    break;
+                } else {
+                    time += 1;
+                    processTime++;
+                    currentProcess.setQuantum(currentProcess.getQuantum() + 1);
+                    currentProcess.burstTime--;
+
+                    if (processTime == currentQuantum && currentProcess.burstTime > 0) {
+                        currentQuantum = (int) Math.ceil(0.1 * meanOfQuantum(processes, time));
+                        quantumHistory.add("Quantum time updated to: " + currentQuantum + ", Process number: "
+                                + currentProcess.name + ", Process quantum: " + currentProcess.getQuantum());
+                        readyQueue.add(currentProcess);
+                    }
+
+                    quantumHistory.add("Quantum time: " + currentQuantum + ", Process number: " + currentProcess.name
+                            + ", Process quantum: " + currentProcess.getQuantum());
+
+                    if (currentProcess.burstTime == 0) {
+                        currentProcess.setQuantum(0);
+                        completedProcesses.add(currentProcess);
+                        int turnAround = time - currentProcess.arrivalTime;
+                        turnAroundTimeMap.put(currentProcess, turnAround);
+                        int waitingTime = turnAround - currentProcess.burstTime;
+                        waitingTimeMap.put(currentProcess, waitingTime);
+                        currentProcess = null;
+                        currentQuantum = quantum; // Reset quantum for the next process
+                        break;
+                    }
+                }
+            }
+        }
+
+        while (!processes.isEmpty()) {
+            completedProcesses.add(processes.remove(0));
+        }
+    }
+
+    public void printProcesses() {
+        for (String s : quantumHistory) {
+            System.out.println(s);
+        }
+
+        for (Map.Entry<Process, Integer> entry : turnAroundTimeMap.entrySet()) {
+            Process process = entry.getKey();
+            int turnaroundTime = entry.getValue();
+            System.out.println("Process: " + process.name + ", Turnaround Time: " + turnaroundTime);
+        }
+
+        for (Map.Entry<Process, Integer> entry : waitingTimeMap.entrySet()) {
+            Process process = entry.getKey();
+            int waitingTime = entry.getValue();
+            System.out.println("Process: " + process.name + ", Waiting Time: " + waitingTime);
         }
     }
 }
