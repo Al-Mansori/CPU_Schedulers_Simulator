@@ -39,11 +39,33 @@ public class AGScheduler extends Scheduler {
             if(!waiting.isEmpty()){
                 //here we should run non preemptive for the half of quantum time
                 //increase time update current process quantum time
+                Process currentProcess = waiting.poll();
+                int halfTime = currentProcess.getQuantum()/2;
+                time += halfTime;
+                int remainingTime = currentProcess.getQuantum() - halfTime;
+                currentProcess.setQuantum(currentProcess.quantum+=remainingTime);
 
                 //preemptive check if there is process arrived + have smaller ag factor
+                while(true){
+                   Process newProcess =  get_smallest_ag_factor(processes,currentProcess);
+                    if(newProcess != null && newProcess.arrivalTime>=time){
+                        //must update current burst and
+                        break;
+                    }
+                    else{
+                        time+=1; // run second by second
+                        //update quantum time
+
+
+
+                    }
+                }
 
 
             }else{
+                //here we must get smallest ag factor
+                //put him in the waiting queue
+                //remove from processes list
                 Process newProcess = get_smallest_ag_factor(processes,null);
                 if(newProcess!=null){
                     waiting.add(newProcess);
@@ -51,10 +73,6 @@ public class AGScheduler extends Scheduler {
                 }else{
                     break;
                 }
-                //here we must get smallest ag factor
-                //put him in the waiting queue
-                //remove from processes list
-
             }
         }
     }
