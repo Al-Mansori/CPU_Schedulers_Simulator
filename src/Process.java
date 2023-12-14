@@ -31,6 +31,10 @@ public class Process {
     int AGFactor;
     int endTime;
 
+    int waitingTime;
+
+    int turnaroundTime;
+
     int initialBurstTime;
 
     private int startTime;
