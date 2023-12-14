@@ -10,13 +10,11 @@ public class PriorityScheduler extends Scheduler {
 
     @Override
     public void execute() {
-        // Implement Priority scheduling logic
-        Collections.sort(processes, Comparator.comparingInt(Process::getPriority)); // Sort processes by priority
+        Collections.sort(processes, Comparator.comparingInt(Process::getPriority)); 
 
         int currentTime = 0;
         int totalProcesses = processes.size();
-        boolean[] executed = new boolean[totalProcesses]; // Track executed processes
-
+        boolean[] executed = new boolean[totalProcesses]; 
         while (true) {
             boolean allExecuted = true;
             int highestPriority = Integer.MAX_VALUE;
