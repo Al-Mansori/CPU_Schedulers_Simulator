@@ -108,10 +108,11 @@ public class Main {
         // Execute each scheduler
         // sjfScheduler.execute();
         // srtfScheduler.execute();
-        priorityScheduler.execute();
-        priorityScheduler.printProcesses();
+//        priorityScheduler.execute();
+//        priorityScheduler.printProcesses();
+
+        agScheduler.printTable();
         agScheduler.execute();
-        agScheduler.printProcesses();
         //
         // Display output for each scheduler
         // Print Processes execution order, Waiting Time, Turnaround Time, Average
