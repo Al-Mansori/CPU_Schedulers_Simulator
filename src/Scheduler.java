@@ -9,6 +9,5 @@ public abstract class Scheduler {
 
     public abstract void execute();
 
-    // Add methods to calculate waiting time, turnaround time, and other necessary
-    // functionalities
+   
 }

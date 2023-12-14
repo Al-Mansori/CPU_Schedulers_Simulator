@@ -10,6 +10,8 @@ public class Process {
     int quantum;
     int remainingTime;
     int AGFactor;
+    
+    private int startTime;
 
     public Process(String name, String color, int arrivalTime, int burstTime, int priority) {
         this.name = name;
@@ -57,5 +59,32 @@ public class Process {
 
     public void setQuantum(int quantum) {
         this.quantum = quantum;
+    }
+
+    //
+    public int getPriority() {
+        return priority;
+    }
+
+    public int getRemainingTime() {
+        return remainingTime;
+    }
+    
+    public void setRemainingTime(int remainingTime) {
+        this.remainingTime = remainingTime;
+    }
+
+    public int waitingTime() {
+        return startTime - arrivalTime;
+    }
+
+    // Method to calculate turnaround time for a process
+    public int turnaroundTime() {
+        return startTime + burstTime - arrivalTime;
+    }
+
+    // Method to set the start time of the process
+    public void setStartTime(int startTime) {
+        this.startTime = startTime;
     }
 }
