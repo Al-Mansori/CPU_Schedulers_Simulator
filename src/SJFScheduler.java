@@ -43,14 +43,16 @@ public class SJFScheduler extends Scheduler {
             System.out.println("Turnaround Time: " + currentProcess.turnaroundTime());
             System.out.println();
 
-            // Calculate averages
-            double averageWaitingTime = (double) totalWaitingTime / totalProcesses;
-            double averageTurnaroundTime = (double) totalTurnaroundTime / totalProcesses;
 
-            // Print averages
-            System.out.println("Average Waiting Time: " + averageWaitingTime);
-            System.out.println("Average Turnaround Time: " + averageTurnaroundTime);
         }
+
+
+        // Calculate averages
+        double averageWaitingTime = (double) totalWaitingTime / totalProcesses;
+        double averageTurnaroundTime = (double) totalTurnaroundTime / totalProcesses;
+        // Print averages
+        System.out.println("Average Waiting Time: " + averageWaitingTime);
+        System.out.println("Average Turnaround Time: " + averageTurnaroundTime);
 
 
     }
