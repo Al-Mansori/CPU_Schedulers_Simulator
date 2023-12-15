@@ -10,11 +10,10 @@ public class PriorityScheduler extends Scheduler {
 
     @Override
     public void execute() {
-        Collections.sort(processes, Comparator.comparingInt(Process::getPriority)); 
-
         int currentTime = 0;
         int totalProcesses = processes.size();
-        boolean[] executed = new boolean[totalProcesses]; 
+        boolean[] executed = new boolean[totalProcesses];
+
         while (true) {
             boolean allExecuted = true;
             int highestPriority = Integer.MAX_VALUE;
@@ -39,6 +38,13 @@ public class PriorityScheduler extends Scheduler {
                 System.out.println("Executing: " + currentProcess.name + " at time " + currentTime);
                 currentProcess.setRemainingTime(currentProcess.getRemainingTime() - 1);
 
+                for (int i = 0; i < totalProcesses; i++) {
+                    if (i != highestPriorityIndex && !executed[i]) {
+
+                        processes.get(i).incrementPriority();
+                    }
+                }
+
                 if (currentProcess.getRemainingTime() == 0) {
                     executed[highestPriorityIndex] = true;
                 }
@@ -48,7 +54,7 @@ public class PriorityScheduler extends Scheduler {
             }
         }
     }
-    
+
     public void printProcesses() {
         int totalProcesses = processes.size();
         int totalWaitingTime = 0;
