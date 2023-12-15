@@ -23,6 +23,15 @@ public class Process {
     public void setBurstTime(int burstTime) {
         this.burstTime = burstTime;
     }
+    public int getWaitingTime(int currentTime) {
+        return Math.max(0, currentTime - arrivalTime);
+    }
+    public void updateWaitingTime(int elapsedTime) {
+        waitingTime += elapsedTime;
+    }
+
+
+
 
     int burstTime;
     int priority;
