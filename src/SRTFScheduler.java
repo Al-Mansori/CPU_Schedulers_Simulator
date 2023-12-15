@@ -3,7 +3,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public class SRTFScheduler extends Scheduler {
-    private static final int AGING_FACTOR = 1;  // Adjust the aging factor as needed
+    private static final int AGING_FACTOR = 1;
 
     public SRTFScheduler(List<Process> processes) {
         super(processes);
@@ -28,7 +28,6 @@ public class SRTFScheduler extends Scheduler {
             }
         }
 
-        // return the new list
         return newList;
     }
 
@@ -114,12 +113,12 @@ public class SRTFScheduler extends Scheduler {
         }
 
 
-        // Calculate and print Average Waiting Time
+
         double avgWaitingTime = (double) totalWaitingTime / processes.size();
 
         System.out.println("\nAverage Waiting Time: " + avgWaitingTime);
 
-        // Calculate and print Average Turnaround Time
+
         double avgTurnaroundTime = (double) totalTurnaroundTime / processes.size();
         System.out.println("Average Turnaround Time: " + avgTurnaroundTime);
     }
