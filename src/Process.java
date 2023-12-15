@@ -23,6 +23,15 @@ public class Process {
     public void setBurstTime(int burstTime) {
         this.burstTime = burstTime;
     }
+    public int getWaitingTime(int currentTime) {
+        return Math.max(0, currentTime - arrivalTime);
+    }
+    public void updateWaitingTime(int elapsedTime) {
+        waitingTime += elapsedTime;
+    }
+
+
+
 
     int burstTime;
     int priority;
@@ -69,15 +78,14 @@ public class Process {
         return startTime - arrivalTime;
     }
 
-    // Method to calculate turnaround time for a process
     public int turnaroundTime() {
         return startTime + burstTime - arrivalTime;
     }
 
-    // Method to set the start time of the process
     public void setStartTime(int startTime) {
         this.startTime = startTime;
     }
+
     public int getInitialBurstTime() {
         return initialBurstTime;
     }
@@ -85,6 +93,7 @@ public class Process {
     public void setInitialBurstTime(int initialBurstTime) {
         this.initialBurstTime = initialBurstTime;
     }
+
     public int getEndTime() {
         return endTime;
     }
@@ -92,21 +101,23 @@ public class Process {
     public void setEndTime(int endTime) {
         this.endTime = endTime;
     }
-    public int random_function(){
+
+    public int random_function() {
         Random rand = new Random();
         int num = rand.nextInt(20);
-        return num + 1 ;
+        return num + 1;
     }
-    public void set_ag_factor(){
-        if(random < 10){
-            setAGFactor(arrivalTime+burstTime+random);
-        } else if (random==10) {
+
+    public void set_ag_factor() {
+        if (random < 10) {
+            setAGFactor(arrivalTime + burstTime + random);
+        } else if (random == 10) {
             setAGFactor(priority + arrivalTime + burstTime);
-        }
-        else{
+        } else {
             setAGFactor(10 + arrivalTime + burstTime);
         }
     }
+
     public int getAGFactor() {
         return AGFactor;
     }
@@ -114,6 +125,7 @@ public class Process {
     public void setAGFactor(int AGFactor) {
         this.AGFactor = AGFactor;
     }
+
     public int getQuantum() {
         return quantum;
     }
@@ -121,6 +133,7 @@ public class Process {
     public void setQuantum(int quantum) {
         this.quantum = quantum;
     }
+
     public int getRandom() {
         return random;
     }
@@ -129,7 +142,9 @@ public class Process {
         this.random = random_function();
     }
 
+    public void incrementPriority() {
 
-
+        this.priority += 1;
+    }
 
 }
