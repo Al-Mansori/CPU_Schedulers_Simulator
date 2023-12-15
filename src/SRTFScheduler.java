@@ -1,3 +1,4 @@
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -29,6 +30,7 @@ public class SRTFScheduler extends Scheduler {
         int currentTime = 0, completedProcesses = 0;
         int totalWaitingTime = 0, totalTurnaroundTime = 0;
         List<Process> executionOrder = new ArrayList<>();
+        List<Process> result = new ArrayList<>();
 
         sortArrival(processes);
 
@@ -36,7 +38,7 @@ public class SRTFScheduler extends Scheduler {
             Process shortestProcess = findShortestProcess(processes, currentTime);
 
             if (shortestProcess != null) {
-                System.out.print(shortestProcess.name + " ");
+                executionOrder.add(shortestProcess);
                 shortestProcess.remainingTime--;
 
                 if (shortestProcess.remainingTime == 0) {
@@ -53,7 +55,6 @@ public class SRTFScheduler extends Scheduler {
                     totalWaitingTime += waitingTime;
 
 
-                    executionOrder.add(shortestProcess);
                 }
             } else {
                 System.out.print("_ ");
@@ -63,15 +64,31 @@ public class SRTFScheduler extends Scheduler {
         }
 
         // Print Processes Execution Order
-        System.out.println("\n\nProcesses completion Order:");
-        for (Process process : executionOrder) {
-            System.out.print(process.name + " ");
+
+        for (int i = 1 ; i < executionOrder.size();i++) {
+            if(executionOrder.get(i)!=executionOrder.get(i-1)){
+                result.add(executionOrder.get(i-1));
+
+            }
+        }
+        result.add(executionOrder.get(executionOrder.size()-1));
+
+        System.out.print("\n\nProcesses completion Order:  ");
+        for (Process p:result){
+            System.out.print(p.name + " ");
+
+        }
+        System.out.println("\n\n");
+
+
+        for(Process p :result){
+
+            System.out.println(p.name + ": Wait time: " + p.waitingTime);
+            System.out.println("    Turnaround time: " + p.turnaroundTime);
             System.out.println();
+
         }
-        for (Process process : executionOrder) {
-            System.out.println(process.name + " Wait time: " + process.waitingTime);
-            System.out.println(process.name + " Turnaround time: " + process.turnaroundTime);
-        }
+
 
         // Calculate and print Average Waiting Time
         double avgWaitingTime = (double) totalWaitingTime / processes.size();
