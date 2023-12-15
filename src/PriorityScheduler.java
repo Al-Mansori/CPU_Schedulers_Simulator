@@ -68,7 +68,7 @@ public class PriorityScheduler extends Scheduler {
         }
 
         // print results
-        System.out.println("Processes Execution Order:");
+       // System.out.println("Processes Execution Order:");
         for (Process p : processes) {
             System.out.println(p.name + ": Wait time: " + p.getWaitingTime());
             System.out.println("    Turnaround time: " + p.getTurnaroundTime());
