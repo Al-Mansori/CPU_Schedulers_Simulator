@@ -74,9 +74,7 @@ public class Process {
         this.remainingTime = remainingTime;
     }
 
-    public int waitingTime() {
-        return startTime - arrivalTime;
-    }
+    
 
     public int turnaroundTime() {
         return startTime + burstTime - arrivalTime;
@@ -146,5 +144,32 @@ public class Process {
 
         this.priority += 1;
     }
+
+   
+
+   
+   
+    public int getTurnaroundTime(int currentTime) {
+        return turnaroundTime;
+    }
+
+
+    public int getWaitingTime() {
+        return waitingTime;
+    }
+
+    public void setWaitingTime(int waitingTime) {
+        this.waitingTime = waitingTime;
+    }
+
+    public int getTurnaroundTime() {
+        return turnaroundTime;
+    }
+
+    public void setTurnaroundTime(int turnaroundTime) {
+        this.turnaroundTime = turnaroundTime;
+    }
+
+   
 
 }

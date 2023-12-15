@@ -77,7 +77,7 @@ public class SRTFScheduler extends Scheduler {
                     shortestProcess.waitingTime = waitingTime;
                     shortestProcess.turnaroundTime = turnaroundTime;
 
-                    totalTurnaroundTime += turnaroundTime;
+                    totalTurnaroundTime += currentTime - shortestProcess.getArrivalTime() + 1;
                     totalWaitingTime += waitingTime;
                 }
             } else {

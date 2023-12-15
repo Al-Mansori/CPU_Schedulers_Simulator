@@ -100,20 +100,21 @@ public class Main {
         }
 
         // Create instances of schedulers
-        SJFScheduler sjfScheduler = new SJFScheduler(new ArrayList<>(processes),contextSwitchingTime);
+        //SJFScheduler sjfScheduler = new SJFScheduler(new ArrayList<>(processes));
         SRTFScheduler srtfScheduler = new SRTFScheduler(new ArrayList<>(processes));
         PriorityScheduler priorityScheduler = new PriorityScheduler(new ArrayList<>(processes));
         AGScheduler agScheduler = new AGScheduler(new ArrayList<>(processes), timeQuantum);
 
         // Execute each scheduler
-        sjfScheduler.execute();
+       // sjfScheduler.execute();
         srtfScheduler.execute();
+        
         priorityScheduler.execute();
-        priorityScheduler.printProcesses();
+        //priorityScheduler.printProcesses();
 
-        agScheduler.printTable();
-        agScheduler.execute();
-
+       // agScheduler.printTable();
+        //agScheduler.execute();
+        
         // Display output for each scheduler
         // Print Processes execution order, Waiting Time, Turnaround Time, Average
         // Waiting Time, Average Turnaround Time

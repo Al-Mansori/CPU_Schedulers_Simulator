@@ -1,5 +1,3 @@
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class PriorityScheduler extends Scheduler {
@@ -10,9 +8,12 @@ public class PriorityScheduler extends Scheduler {
 
     @Override
     public void execute() {
-        int currentTime = 0;
         int totalProcesses = processes.size();
+        int currentTime = 0;
         boolean[] executed = new boolean[totalProcesses];
+
+        int totalWaitingTime = 0;
+        int totalTurnaroundTime = 0;
 
         while (true) {
             boolean allExecuted = true;
@@ -40,33 +41,39 @@ public class PriorityScheduler extends Scheduler {
 
                 for (int i = 0; i < totalProcesses; i++) {
                     if (i != highestPriorityIndex && !executed[i]) {
-
                         processes.get(i).incrementPriority();
                     }
                 }
 
                 if (currentProcess.getRemainingTime() == 0) {
                     executed[highestPriorityIndex] = true;
+                    currentProcess.setEndTime(currentTime + 1); // Set the end time for the completed process
+
+                    // calculate waiting time and turnaround time for completed process
+                    int waitingTime = currentTime + 1 - currentProcess.getArrivalTime() - currentProcess.getBurstTime();
+                    int turnaroundTime = currentTime + 1 - currentProcess.getArrivalTime();
+                    currentProcess.setWaitingTime(waitingTime);
+                    currentProcess.setTurnaroundTime(turnaroundTime);
                 }
                 currentTime++;
             } else {
                 currentTime++;
             }
         }
-    }
 
-    public void printProcesses() {
-        int totalProcesses = processes.size();
-        int totalWaitingTime = 0;
-        int totalTurnaroundTime = 0;
-
-        System.out.println("Process Execution Order:");
+      
         for (Process process : processes) {
-            System.out.print(process.name + " ");
-            totalWaitingTime += process.waitingTime();
-            totalTurnaroundTime += process.turnaroundTime();
+            totalWaitingTime += process.getWaitingTime();
+            totalTurnaroundTime += process.getTurnaroundTime();
         }
-        System.out.println();
+
+        // print results
+        System.out.println("Processes Execution Order:");
+        for (Process p : processes) {
+            System.out.println(p.name + ": Wait time: " + p.getWaitingTime());
+            System.out.println("    Turnaround time: " + p.getTurnaroundTime());
+            System.out.println();
+        }
 
         double avgWaitingTime = (double) totalWaitingTime / totalProcesses;
         double avgTurnaroundTime = (double) totalTurnaroundTime / totalProcesses;
