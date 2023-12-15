@@ -34,7 +34,7 @@ public class SJFScheduler extends Scheduler {
                 currentTime+= contextSwitching;
             }
             isFirstProcess = false;
-//            System.out.println("Executing: " + currentProcess.name + " at time " + currentTime);
+            System.out.println("Executing: " + currentProcess.name + " at time " + currentTime);
             currentProcess.setStartTime(currentTime);
             int currentProcessWaitingTime = currentProcess.getWaitingTime(currentTime);
             totalWaitingTime += currentProcessWaitingTime;
