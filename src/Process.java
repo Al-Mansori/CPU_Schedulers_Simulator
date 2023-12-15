@@ -30,8 +30,7 @@ public class Process {
         waitingTime += elapsedTime;
     }
 
-
-
+    boolean isDone;
 
     int burstTime;
     int priority;
@@ -146,9 +145,6 @@ public class Process {
     }
 
    
-
-   
-   
     public int getTurnaroundTime(int currentTime) {
         return turnaroundTime;
     }
@@ -170,6 +166,13 @@ public class Process {
         this.turnaroundTime = turnaroundTime;
     }
 
-   
+    public boolean getIsDone(){
+        return this.isDone;
+    }
+
+    public void setIsDone(){
+        this.isDone = true;
+    }
+
 
 }

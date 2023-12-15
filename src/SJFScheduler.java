@@ -16,6 +16,7 @@ public class SJFScheduler extends Scheduler {
         int completedProcesses = 0;
         int totalWaitingTime = 0;
         int totalTurnaroundTime = 0;
+        boolean isFirstProcess = true;
 
 
         int currentTime = 0;
@@ -28,18 +29,23 @@ public class SJFScheduler extends Scheduler {
 
             Collections.sort(arrivedProcesses, Comparator.comparingInt(Process::getBurstTime));
             Process currentProcess = arrivedProcesses.get(0);
-            System.out.println("Executing: " + currentProcess.name + " at time " + currentTime);
+            currentProcess.setIsDone();
+            if(!isFirstProcess){
+                currentTime+= contextSwitching;
+            }
+            isFirstProcess = false;
+//            System.out.println("Executing: " + currentProcess.name + " at time " + currentTime);
             currentProcess.setStartTime(currentTime);
+            int currentProcessWaitingTime = currentProcess.getWaitingTime(currentTime);
+            totalWaitingTime += currentProcessWaitingTime;
             currentTime += currentProcess.getBurstTime();
             currentProcess.setEndTime(currentTime);
-            currentTime += contextSwitching;
-            totalWaitingTime += currentProcess.waitingTime();
             totalTurnaroundTime += currentProcess.turnaroundTime();
             completedProcesses++;
 
             // Print details for each process
             System.out.println("Process: " + currentProcess.name);
-            System.out.println("Waiting Time: " + currentProcess.waitingTime());
+            System.out.println("Waiting Time: " + currentProcessWaitingTime);
             System.out.println("Turnaround Time: " + currentProcess.turnaroundTime());
             System.out.println();
 
@@ -59,12 +65,13 @@ public class SJFScheduler extends Scheduler {
 
     public ArrayList<Process> filterArrived(int timestamp) {
         ArrayList<Process> arrivedProcesses = new ArrayList<>();
+
         for (Process process: processes) {
-            if(process.getArrivalTime() <= timestamp){
+            if(process.getArrivalTime() <= timestamp && !process.getIsDone()){
                 arrivedProcesses.add(process);
             }
         }
+
         return arrivedProcesses;
     }
 }
-
